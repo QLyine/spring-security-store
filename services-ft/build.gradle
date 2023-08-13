@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+dependencies {
+    // https://mvnrepository.com/artifact/io.cucumber/cucumber-picocontainer
+    testImplementation group: 'io.cucumber', name: 'cucumber-picocontainer', version: '7.13.0'
+
+    // https://mvnrepository.com/artifact/org.picocontainer/picocontainer
+    testImplementation group: 'org.picocontainer', name: 'picocontainer', version: '2.15'
+
+    // https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine
+    testImplementation group: 'org.junit.vintage', name: 'junit-vintage-engine', version: '5.10.0'
+    // https://mvnrepository.com/artifact/io.cucumber/cucumber-junit
+    testImplementation group: 'io.cucumber', name: 'cucumber-junit', version: '7.13.0'
+
+    // https://mvnrepository.com/artifact/io.cucumber/cucumber-java
+    testImplementation group: 'io.cucumber', name: 'cucumber-java', version: '7.13.0'
+
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.3.1'
+    // https://mvnrepository.com/artifact/io.rest-assured/json-path
+    testImplementation group: 'io.rest-assured', name: 'json-path', version: '5.3.1'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+
+    // https://mvnrepository.com/artifact/org.assertj/assertj-core
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.24.2'
+    // https://mvnrepository.com/artifact/org.assertj/assertj-db
+    testImplementation group: 'org.assertj', name: 'assertj-db', version: '2.0.2'
+
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task cucumberCli() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = [
+                    '--plugin', 'pretty',
+                    '--plugin', 'html:target/cucumber-report.html',
+                    '--glue', 'com.baeldung.cucumber',
+                    'src/test/resources']
+        }
+    }
+}

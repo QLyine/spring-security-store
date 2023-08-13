@@ -1,0 +1,6 @@
+rootProject.name = 'spring-boot-store'
+include 'user-service'
+include 'product-service'
+include 'services-ft'
+include 'order-service'
+
